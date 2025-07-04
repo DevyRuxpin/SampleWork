@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kali Social Media Scraper - Web Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app" class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-xl font-bold text-gray-800">Kali Social Media Scraper</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button @click="activeTab = 'dashboard'" 
+                                :class="activeTab === 'dashboard' ? 'bg-blue-500 text-white' : 'text-gray-600'"
+                                class="px-3 py-2 rounded-md text-sm font-medium">
+                            Dashboard
+                        </button>
+                        <button @click="activeTab = 'scraping'" 
+                                :class="activeTab === 'scraping' ? 'bg-blue-500 text-white' : 'text-gray-600'"
+                                class="px-3 py-2 rounded-md text-sm font-medium">
+                            Scraping
+                        </button>
+                        <button @click="activeTab = 'analytics'" 
+                                :class="activeTab === 'analytics' ? 'bg-blue-500 text-white' : 'text-gray-600'"
+                                class="px-3 py-2 rounded-md text-sm font-medium">
+                            Analytics
+                        </button>
+                        <button @click="activeTab = 'settings'" 
+                                :class="activeTab === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-600'"
+                                class="px-3 py-2 rounded-md text-sm font-medium">
+                            Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 px-4">
+            <!-- Dashboard Tab -->
+            <div v-if="activeTab === 'dashboard'" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-lg shadow p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Posts</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ stats.totalPosts || 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Active Jobs</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ activeJobs.length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Success Rate</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ stats.successRate || '95%' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Platforms</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ platforms.length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Jobs -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Recent Scraping Jobs</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr v-for="job in recentJobs" :key="job.id">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ job.id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.platform }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.target }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span :class="getStatusClass(job.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                            {{ job.status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div :style="{ width: job.progress + '%' }" class="bg-blue-600 h-2 rounded-full"></div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(job.created_at) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scraping Tab -->
+            <div v-if="activeTab === 'scraping'" class="space-y-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Start New Scraping Job</h3>
+                    
+                    <form @submit.prevent="startScraping" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Platform</label>
+                                <select v-model="scrapingForm.platform" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option v-for="platform in platforms" :key="platform.id" :value="platform.id">
+                                        {{ platform.name }} ({{ platform.status }})
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Target Type</label>
+                                <select v-model="scrapingForm.target_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option value="user">User</option>
+                                    <option value="hashtag">Hashtag</option>
+                                    <option value="keyword">Keyword</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Target</label>
+                                <input v-model="scrapingForm.target" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Enter username, hashtag, or keyword">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Limit</label>
+                                <input v-model="scrapingForm.limit" type="number" min="1" max="1000" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="100">
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4">
+                            <label class="flex items-center">
+                                <input v-model="scrapingForm.use_proxies" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">Use Proxies</span>
+                            </label>
+                            
+                            <label class="flex items-center">
+                                <input v-model="scrapingForm.use_rate_limiting" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">Rate Limiting</span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="submit" :disabled="isStarting" class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded">
+                                {{ isStarting ? 'Starting...' : 'Start Scraping' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Active Jobs -->
+                <div v-if="activeJobs.length > 0" class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Active Jobs</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div v-for="job in activeJobs" :key="job.id" class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">{{ job.platform }} - {{ job.target }}</h4>
+                                    <p class="text-sm text-gray-500">Job ID: {{ job.id }}</p>
+                                </div>
+                                <span :class="getStatusClass(job.status)" class="px-2 py-1 text-xs font-semibold rounded-full">
+                                    {{ job.status }}
+                                </span>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Progress</span>
+                                    <span>{{ job.progress }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div :style="{ width: job.progress + '%' }" class="bg-blue-600 h-2 rounded-full transition-all duration-300"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div v-if="activeTab === 'analytics'" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Posts by Platform</h3>
+                        <canvas id="platformChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Scraping Activity</h3>
+                        <canvas id="activityChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Performance Metrics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">{{ stats.avgResponseTime || '1.2s' }}</div>
+                            <div class="text-sm text-gray-600">Avg Response Time</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">{{ stats.successRate || '95%' }}</div>
+                            <div class="text-sm text-gray-600">Success Rate</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600">{{ stats.totalRequests || '1,234' }}</div>
+                            <div class="text-sm text-gray-600">Total Requests</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div v-if="activeTab === 'settings'" class="space-y-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Database Configuration</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Database URL</label>
+                            <input v-model="settings.database_url" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="sqlite:///data/scraper.db">
+                        </div>
+                        <div class="flex justify-end">
+                            <button @click="saveSettings" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Proxy Settings</h3>
+                    <div class="space-y-4">
+                        <label class="flex items-center">
+                            <input v-model="settings.use_proxies" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-700">Enable Proxy Rotation</span>
+                        </label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Proxy Timeout (seconds)</label>
+                            <input v-model="settings.proxy_timeout" type="number" min="1" max="60" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    activeTab: 'dashboard',
+                    platforms: [
+                        { id: 'twitter', name: 'Twitter/X', status: 'fully_implemented' },
+                        { id: 'instagram', name: 'Instagram', status: 'placeholder' },
+                        { id: 'facebook', name: 'Facebook', status: 'placeholder' },
+                        { id: 'linkedin', name: 'LinkedIn', status: 'placeholder' },
+                        { id: 'tiktok', name: 'TikTok', status: 'placeholder' }
+                    ],
+                    stats: {
+                        totalPosts: 1234,
+                        successRate: '95%',
+                        avgResponseTime: '1.2s',
+                        totalRequests: '1,234'
+                    },
+                    activeJobs: [],
+                    recentJobs: [
+                        {
+                            id: 'job_20231201_143022',
+                            platform: 'twitter',
+                            target: 'elonmusk',
+                            status: 'completed',
+                            progress: 100,
+                            created_at: '2023-12-01T14:30:22Z'
+                        },
+                        {
+                            id: 'job_20231201_142015',
+                            platform: 'twitter',
+                            target: 'python',
+                            status: 'running',
+                            progress: 65,
+                            created_at: '2023-12-01T14:20:15Z'
+                        }
+                    ],
+                    scrapingForm: {
+                        platform: 'twitter',
+                        target_type: 'user',
+                        target: '',
+                        limit: 100,
+                        use_proxies: true,
+                        use_rate_limiting: true
+                    },
+                    isStarting: false,
+                    settings: {
+                        database_url: 'sqlite:///data/scraper.db',
+                        use_proxies: true,
+                        proxy_timeout: 10
+                    }
+                }
+            },
+            methods: {
+                getStatusClass(status) {
+                    const classes = {
+                        'completed': 'bg-green-100 text-green-800',
+                        'running': 'bg-blue-100 text-blue-800',
+                        'error': 'bg-red-100 text-red-800',
+                        'starting': 'bg-yellow-100 text-yellow-800'
+                    }
+                    return classes[status] || 'bg-gray-100 text-gray-800'
+                },
+                formatDate(dateString) {
+                    return new Date(dateString).toLocaleDateString()
+                },
+                async startScraping() {
+                    this.isStarting = true
+                    
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000))
+                    
+                    // Add to active jobs
+                    const newJob = {
+                        id: `job_${new Date().toISOString().replace(/[:.]/g, '').slice(0, -5)}`,
+                        platform: this.scrapingForm.platform,
+                        target: this.scrapingForm.target,
+                        target_type: this.scrapingForm.target_type,
+                        status: 'starting',
+                        progress: 0,
+                        created_at: new Date().toISOString()
+                    }
+                    
+                    this.activeJobs.push(newJob)
+                    this.recentJobs.unshift(newJob)
+                    
+                    // Simulate progress updates
+                    this.simulateJobProgress(newJob.id)
+                    
+                    this.isStarting = false
+                    this.scrapingForm.target = ''
+                },
+                simulateJobProgress(jobId) {
+                    const job = this.activeJobs.find(j => j.id === jobId)
+                    if (!job) return
+                    
+                    job.status = 'running'
+                    
+                    const interval = setInterval(() => {
+                        job.progress += Math.random() * 10
+                        
+                        if (job.progress >= 100) {
+                            job.progress = 100
+                            job.status = 'completed'
+                            clearInterval(interval)
+                        }
+                    }, 1000)
+                },
+                saveSettings() {
+                    // Simulate saving settings
+                    alert('Settings saved successfully!')
+                },
+                initCharts() {
+                    // Platform chart
+                    const platformCtx = document.getElementById('platformChart')
+                    if (platformCtx) {
+                        new Chart(platformCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Twitter', 'Instagram', 'Facebook', 'LinkedIn', 'TikTok'],
+                                datasets: [{
+                                    data: [45, 20, 15, 12, 8],
+                                    backgroundColor: ['#1DA1F2', '#E4405F', '#1877F2', '#0A66C2', '#000000']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        })
+                    }
+                    
+                    // Activity chart
+                    const activityCtx = document.getElementById('activityChart')
+                    if (activityCtx) {
+                        new Chart(activityCtx, {
+                            type: 'line',
+                            data: {
+                                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                                datasets: [{
+                                    label: 'Posts Scraped',
+                                    data: [65, 59, 80, 81, 56, 55, 40],
+                                    borderColor: '#3B82F6',
+                                    tension: 0.1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+            },
+            mounted() {
+                // Initialize charts when analytics tab is shown
+                this.$nextTick(() => {
+                    if (this.activeTab === 'analytics') {
+                        this.initCharts()
+                    }
+                })
+            },
+            watch: {
+                activeTab(newTab) {
+                    if (newTab === 'analytics') {
+                        this.$nextTick(() => {
+                            this.initCharts()
+                        })
+                    }
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html> 

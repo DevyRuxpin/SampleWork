@@ -1,0 +1,48 @@
+# Core HTTP and Async Libraries
+httpx==0.25.2
+aiohttp==3.9.1
+asyncio-throttle==1.0.2
+
+# HTML Parsing and Web Scraping
+beautifulsoup4==4.12.2
+lxml==4.9.3
+parsel==1.8.1
+selenium==4.15.2
+playwright==1.40.0
+
+# User Agent and Proxy Management
+fake-useragent==1.4.0
+aiohttp-proxy==0.1.2
+python-socks==2.4.4
+
+# Database and Data Processing
+sqlalchemy==2.0.23
+alembic==1.13.0
+pandas==2.1.4
+pydantic==2.5.0
+
+# CLI and Configuration
+typer==0.9.0
+rich==13.7.0
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Logging and Utilities
+loguru==0.7.2
+tenacity==8.2.3
+python-dateutil==2.8.2
+
+# JSON and Data Handling
+ujson==5.8.0
+orjson==3.9.10
+
+# Rate Limiting and Caching
+aiocache==0.12.2
+redis==5.0.1
+
+# Development and Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0 
