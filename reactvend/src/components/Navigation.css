@@ -1,0 +1,17 @@
+nav {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+nav a {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: #007bff;
+} 
