@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome to the SQL Performance Monitoring Tool</h1>
+<form action="/execute-query" method="post">
+    <label for="database">Select Database:</label><br>
+    <select id="database" name="database">
+        <option value="postgresql">PostgreSQL</option>
+        <option value="sqlite">SQLite</option>
+    </select><br><br>
+    <label for="sql_query">Enter SQL Query:</label><br>
+    <textarea id="sql_query" name="sql_query" rows="4" cols="50"></textarea><br><br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

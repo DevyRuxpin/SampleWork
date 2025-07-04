@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Performance Metrics{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">SQL Query Performance Metrics</h1>
+    <div id="visualization">
+        <!-- Bokeh plot will be embedded here -->
+        {{ bokeh_script | safe }}
+    </div>
+</div>
+{% endblock %}

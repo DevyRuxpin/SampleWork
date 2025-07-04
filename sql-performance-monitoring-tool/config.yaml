@@ -1,0 +1,17 @@
+database:
+  type: postgresql
+  host: localhost
+  port: 5001
+  user: postgres
+  password: ""
+  database_name: monitoring_db
+
+alerting:
+  thresholds:
+    cpu_usage: 80
+    memory_usage: 75
+    query_response_time: 2.0
+
+visualization:
+  report_interval: daily
+  show_trends: true

@@ -1,0 +1,7 @@
+fastapi==0.70.0
+uvicorn==0.15.0
+SQLAlchemy==1.4.22
+ruamel.yaml==0.17.17
+bokeh==2.4.3
+python-dotenv==0.19.2
+python-multipart==0.0.5
