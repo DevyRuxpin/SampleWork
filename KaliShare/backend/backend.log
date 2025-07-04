@@ -1,0 +1,22 @@
+Database initialized successfully
+🚀 Server running on port 5001
+📊 Health check: http://localhost:5001/health
+🔍 API info: http://localhost:5001/api
+ValidationError: The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false (default). This could indicate a misconfiguration which would prevent express-rate-limit from accurately identifying users. See https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/ for more information.
+    at _Validations.<anonymous> (/Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:180:15)
+    at _Validations.wrap (/Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:313:18)
+    at _Validations.xForwardedForHeader (/Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:178:10)
+    at Object.keyGenerator (/Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:542:19)
+    at /Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:595:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/marcharriman/Desktop/KaliShare/backend/node_modules/express-rate-limit/dist/index.cjs:576:5 {
+  code: 'ERR_ERL_UNEXPECTED_X_FORWARDED_FOR',
+  help: 'https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/'
+}
+User connected: RUCe3Q_SgqxQ6ZXHAAAC
+User RUCe3Q_SgqxQ6ZXHAAAC joined timeline
+User disconnected: RUCe3Q_SgqxQ6ZXHAAAC
+Web search error: TypeError: Cannot read properties of undefined (reading 'length')
+    at performWebSearch (/Users/marcharriman/Desktop/KaliShare/backend/routes/search.js:249:107)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/marcharriman/Desktop/KaliShare/backend/routes/search.js:137:27

@@ -1,0 +1,34 @@
+# Railway-specific Dockerfile for KaliShare Frontend
+# Updated: Force rebuild to clear cache
+FROM node:18-alpine
+
+# Force cache invalidation - change this value to force rebuild
+ARG CACHEBUST=2
+
+# Install curl for health checks and serve for static file serving
+RUN apk add --no-cache curl && npm install -g serve
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build the React app
+RUN npm run build
+
+# Expose port (Railway will set PORT environment variable)
+EXPOSE ${PORT:-3000}
+
+# Health check (use PORT environment variable)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
+
+# Serve the built app (use PORT environment variable)
+CMD ["sh", "-c", "serve -s build -l ${PORT:-3000}"] 

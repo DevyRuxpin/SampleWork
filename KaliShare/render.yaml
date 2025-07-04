@@ -1,0 +1,34 @@
+services:
+  # Backend API Service
+  - type: web
+    name: kalishare-backend
+    runtime: node
+    plan: free
+    buildCommand: |
+      cd backend
+      npm install
+    startCommand: |
+      cd backend
+      npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kalishare-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GA_MEASUREMENT_ID
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
+
+databases:
+  # PostgreSQL Database
+  - name: kalishare-db
+    databaseName: kalishare
+    user: kalishare_user
+    plan: free 
